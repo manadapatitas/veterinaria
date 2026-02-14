@@ -7,6 +7,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- EmailJS para envío automático de emails -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+// Cambiar de tab
+function switchTab(tabName) {
+    // Si intenta acceder a admin y no está autenticado
+    if (tabName === 'admin' && !isAuthenticated) {
+        showAuthModal();
+        return;
+    }
+    
+    // Si cambia de tab desde admin, cerrar sesión
+    if (tabName !== 'admin') {
+        isAuthenticated = false;
+    }
+    
+    // Si cambia de tab desde "Mis Citas", resetear código de cliente
+    if (tabName !== 'citas') {
+        resetAccessCode();
+    }
+    
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    // Encontrar el tab correcto y activarlo
+    const tabs = document.querySelectorAll('.tab');
+    const tabNames = ['servicios', 'agendar', 'citas', 'admin'];
+    const tabIndex = tabNames.indexOf(tabName);
+    if (tabIndex !== -1 && tabs[tabIndex]) {
+        tabs[tabIndex].classList.add('active');
+    }
+    document.getElementById(tabName).classList.add('active');
+    
+    if (tabName === 'admin') {
+        loadAdminPanel();
+    } else if (tabName === 'citas') {
+        resetAccessCode();
+    } else if (tabName === 'servicios') {
+        updateContactDisplay();
+    } else if (tabName === 'agendar') {
+        showAvailableDays();
+    }
+}
+</script>
+
     <style>
         :root {
             --primary: #4a7c59;
