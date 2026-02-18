@@ -1375,6 +1375,7 @@ async function sendToGoogleSheets(action, data) {
         ...data,   // aquí llega { appointment }
       }),
     });
+      console.log("Sincronizado con Google Sheets");
     return true;
   } catch (error) {
     console.warn("No se pudo sincronizar con Google Sheets", error);
@@ -2328,10 +2329,10 @@ async function sendToGoogleSheets(action, data) {
             localStorage.setItem('appointments', JSON.stringify(appointments));
             console.log('✅ Cita guardada en localStorage. Total:', appointments.length);
             
-            // Sincronizar con Google Sheets
-            console.log('📤 Enviando a Google Sheets...');
-            await sendToGoogleSheets('save', { appointment: appointment });
-            console.log('✅ Enviado a Google Sheets');
+            console.log("📤 Enviando a Google Sheets...");
+await sendToGoogleSheets("save", { appointment });  // <-- cambio aquí
+console.log("✅ Enviado a Google Sheets");
+
 
             // Enviar notificaciones
             sendNotifications(appointment);
