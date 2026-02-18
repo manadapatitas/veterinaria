@@ -1365,21 +1365,23 @@
         // ========================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9_qWhIuqxu_M-MSWTJenqfqovPMaBeAUii7PvYyBymYp-UNXD-f8AMQfizsrylWbE/exec';
         
-        async function sendToGoogleSheets(action, data) {
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: action, ...data })
-                });
-                console.log('✅ Sincronizado con Google Sheets');
-                return true;
-            } catch (error) {
-                console.warn('⚠️ No se pudo sincronizar con Google Sheets:', error);
-                return true;
-            }
-        }
+async function sendToGoogleSheets(action, data) {
+  try {
+    await fetch(GOOGLESCRIPTURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action,
+        ...data,   // aquí llega { appointment }
+      }),
+    });
+    return true;
+  } catch (error) {
+    console.warn("No se pudo sincronizar con Google Sheets", error);
+    return true;
+  }
+}
+
         
         async function syncAppointmentsFromSheets() {
             console.log('🔄 Intentando sincronizar con Google Sheets...');
@@ -2328,7 +2330,7 @@
             
             // Sincronizar con Google Sheets
             console.log('📤 Enviando a Google Sheets...');
-            await sendToGoogleSheets('create', { appointment: appointment });
+            await sendToGoogleSheets('save', { appointment: appointment });
             console.log('✅ Enviado a Google Sheets');
 
             // Enviar notificaciones
