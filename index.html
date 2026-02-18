@@ -1367,7 +1367,7 @@
         
 async function sendToGoogleSheets(action, data) {
   try {
-    await fetch(GOOGLESCRIPTURL, {
+    await fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
