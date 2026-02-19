@@ -1363,36 +1363,31 @@
         // ========================================
         // 🔗 GOOGLE SHEETS SYNC
         // ========================================
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzE8rIIJzE0l0HoXMl8sRGwOOABMCU6wkS1o94oUL63fwQ3PYbC9SBEavt0AvLQTbhk/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyG5EHRQmisAJY4rY-uOJ5A7YuFCBGvfvY9zQMuUf1QuW09Uqblnsk7aQePt1sqhY8/exec';
         
 
 async function sendToGoogleSheets(action, data) {
-    // Esta es tu URL actual. Si creas una "Nueva Implementación", cámbiala aquí.
-    const url = "https://script.google.com/macros/s/AKfycbyzsKuvQIBRtcIbH9uA3PEapujWHl5PQx8Z-owmibEtH848ThqGJb2uxtEp-fDyHgIz/exec";
+    // REEMPLAZA ESTA URL POR LA QUE ACABAS DE COPIAR
+    const url = "https://script.google.com/macros/s/AKfycbyzsKuvQIBRtcIbH9uA3PEapujWHl5PQx8Z-owmibEtH848ThqGJb2uxtEp-fDyHgIz/exec"; 
 
     try {
-        console.log(`📤 Enviando a Sheets: ${action}`, data);
-        
-        // Transformamos los datos a formato de formulario (evita el bloqueo CORS)
         const formData = new URLSearchParams();
         formData.append('action', action);
         formData.append('appointment', JSON.stringify(data.appointment));
 
         const response = await fetch(url, {
             method: "POST",
-            body: formData.toString(),
+            body: formData, // Enviamos el objeto formData directamente
             headers: { 
                 "Content-Type": "application/x-www-form-urlencoded" 
             }
         });
 
-        // Ahora sí podemos leer si Google escribió la fila con éxito
         const result = await response.json();
-        console.log("✅ Respuesta de Google Sheets:", result);
+        console.log("📥 Respuesta de Sheets:", result);
         return result.success;
-
     } catch (error) {
-        console.error("❌ Error de conexión con Google Sheets:", error);
+        console.error("❌ Error de red/servidor:", error);
         return false;
     }
 }
