@@ -1365,38 +1365,37 @@
         // ========================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxzcLZ7Hgzy-CU30f6EBlzusAWcoRupVuU-tkhieBB-xej_fTWFe71HdS1IeiGOl1Po/exec';
         
-async function sendToGoogleSheets(action, data) {
-  try {
-    console.log("📤 Enviando a Sheets:", action, data);
-    
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action,
-        ...data,
-      }),
-    });
-    
-    // CRÍTICO: Esperar y verificar la respuesta
-    const result = await response.json();
-    console.log("📥 Respuesta de Sheets:", result);
-    
-    if (result.success) {
-      console.log("✅ Sincronizado con Google Sheets");
-      return true;
-    } else {
-      console.error("❌ Error de Sheets:", result.error || "Unknown error");
-      alert("⚠️ No se pudo guardar en Google Sheets: " + (result.error || "Error desconocido"));
-      return false;
-    }
-  } catch (error) {
-    console.error("❌ Error de red/servidor:", error);
-    alert("⚠️ Error de conexión con Google Sheets. Verifica tu conexión a internet.");
-    return false;
-  }
-}
 
+async function sendToGoogleSheets(action, data) {
+    // Esta es tu URL actual. Si creas una "Nueva Implementación", cámbiala aquí.
+    const url = "https://script.google.com/macros/s/AKfycbyzsKuvQIBRtcIbH9uA3PEapujWHl5PQx8Z-owmibEtH848ThqGJb2uxtEp-fDyHgIz/exec";
+
+    try {
+        console.log(`📤 Enviando a Sheets: ${action}`, data);
+        
+        // Transformamos los datos a formato de formulario (evita el bloqueo CORS)
+        const formData = new URLSearchParams();
+        formData.append('action', action);
+        formData.append('appointment', JSON.stringify(data.appointment));
+
+        const response = await fetch(url, {
+            method: "POST",
+            body: formData.toString(),
+            headers: { 
+                "Content-Type": "application/x-www-form-urlencoded" 
+            }
+        });
+
+        // Ahora sí podemos leer si Google escribió la fila con éxito
+        const result = await response.json();
+        console.log("✅ Respuesta de Google Sheets:", result);
+        return result.success;
+
+    } catch (error) {
+        console.error("❌ Error de conexión con Google Sheets:", error);
+        return false;
+    }
+}
         
         async function syncAppointmentsFromSheets() {
             console.log('🔄 Intentando sincronizar con Google Sheets...');
