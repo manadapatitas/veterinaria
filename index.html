@@ -1365,34 +1365,40 @@
         // ========================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxWS5n3UDMaYZKBOOtSid2SlVGWmu66zXezF3AHaBNVLMoHAlu8cB-o3OMZU5jkcl9S/exec';
         
-
+// ✅ PEGA ESTA VERSIÓN:
 async function sendToGoogleSheets(action, data) {
-    const url = "TU_URL_DE_GOOGLE_SCRIPT"; // Asegúrate que sea la correcta
-    
-    // IMPORTANTE: Enviar como FormData para evitar el bloqueo CORS de Google
-    const formData = new URLSearchParams();
-    formData.append('action', action);
-    formData.append('appointment', JSON.stringify(data.appointment));
+    // URL de tu Script. Si creas una nueva implementación, actualízala aquí.
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeO1t11tZqgD-r3n_tW8sH0K22D9_0l_IqQ8vE2uA_x0M4Ew3lU2p3_Y0zYy5K1DDI/exec";
 
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            body: formData, // Enviamos como formulario, no como JSON directo
+        console.log("📤 Enviando a Sheets:", action, data);
+
+        // EL TRUCO: Creamos un JSON estándar pero le diremos al navegador que es texto
+        const payload = {
+            action: action,
+            appointment: data.appointment
+        };
+
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify(payload), 
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                // Al decir 'text/plain', evitamos el bloqueo CORS del navegador ("Failed to fetch")
+                "Content-Type": "text/plain;charset=utf-8"
             }
         });
 
-        // Google Apps Script redirige, por lo que a veces la respuesta es opaca
-        // Si el script se ejecutó bien, esto debería funcionar
         const result = await response.json();
+        console.log("✅ Respuesta de Sheets:", result);
         return result.success;
-        
+
     } catch (error) {
-        console.error("Error en la conexión con Google Sheets:", error);
+        console.error("❌ Error de conexión:", error);
+        alert("⚠️ Error de red. Revisa tu internet o los permisos del Script de Google.");
         return false;
     }
 }
+
         
         async function syncAppointmentsFromSheets() {
             console.log('🔄 Intentando sincronizar con Google Sheets...');
