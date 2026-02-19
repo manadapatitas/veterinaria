@@ -1367,27 +1367,29 @@
         
 
 async function sendToGoogleSheets(action, data) {
-    // REEMPLAZA ESTA URL POR LA QUE ACABAS DE COPIAR
-    const url = "https://script.google.com/macros/s/AKfycbyzsKuvQIBRtcIbH9uA3PEapujWHl5PQx8Z-owmibEtH848ThqGJb2uxtEp-fDyHgIz/exec"; 
+    const url = "TU_URL_DE_GOOGLE_SCRIPT"; // Asegúrate que sea la correcta
+    
+    // IMPORTANTE: Enviar como FormData para evitar el bloqueo CORS de Google
+    const formData = new URLSearchParams();
+    formData.append('action', action);
+    formData.append('appointment', JSON.stringify(data.appointment));
 
     try {
-        const formData = new URLSearchParams();
-        formData.append('action', action);
-        formData.append('appointment', JSON.stringify(data.appointment));
-
         const response = await fetch(url, {
-            method: "POST",
-            body: formData, // Enviamos el objeto formData directamente
-            headers: { 
-                "Content-Type": "application/x-www-form-urlencoded" 
+            method: 'POST',
+            body: formData, // Enviamos como formulario, no como JSON directo
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
             }
         });
 
+        // Google Apps Script redirige, por lo que a veces la respuesta es opaca
+        // Si el script se ejecutó bien, esto debería funcionar
         const result = await response.json();
-        console.log("📥 Respuesta de Sheets:", result);
         return result.success;
+        
     } catch (error) {
-        console.error("❌ Error de red/servidor:", error);
+        console.error("Error en la conexión con Google Sheets:", error);
         return false;
     }
 }
